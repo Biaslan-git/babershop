@@ -1,36 +1,135 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Black Blade Barbershop
 
-## Getting Started
+Лендинг премиум барбершопа с встроенной CMS для редактирования контента.
 
-First, run the development server:
+## Стек
+
+- **Next.js 16** (App Router)
+- **React 19**
+- **Tailwind CSS 4**
+- **Framer Motion** — анимации
+- **SQLite** (better-sqlite3) — хранение данных
+- **TipTap** — WYSIWYG редактор
+- **shadcn/ui** — компоненты админки
+
+## Запуск
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Лендинг: http://localhost:3000  
+Админка: http://localhost:3000/admin
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Админка (CMS)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Вход
 
-## Learn More
+Пароль по умолчанию: `admin123`
 
-To learn more about Next.js, take a look at the following resources:
+Для смены пароля установите переменную окружения:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+CMS_ADMIN_PASSWORD=your_secure_password
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Структура
 
-## Deploy on Vercel
+**Секции** — единичные блоки контента:
+- Hero — главный экран
+- О нас — информация о компании
+- Контакты — адрес, телефон, часы работы
+- Футер — подвал сайта
+- SEO — мета-теги
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+**Коллекции** — списки элементов:
+- Услуги — название, цена, длительность
+- Мастера — имя, фото, специализация
+- Отзывы — клиент, текст, рейтинг
+- Галерея — фото работ
+- Соцсети — ссылки на Instagram, Telegram и т.д.
+- Навигация — пункты меню
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Возможности
+
+- Drag-n-drop сортировка элементов коллекций
+- WYSIWYG редактор для форматированного текста
+- Загрузка изображений
+- Дублирование элементов
+- Поиск по коллекциям
+- Сброс к начальным значениям
+- Удобный редактор расписания (часы работы)
+
+## API
+
+### Секции
+
+```
+GET  /api/cms/content?id=hero     — получить секцию
+PUT  /api/cms/content             — обновить секцию
+PUT  /api/cms/content/reset?id=X  — сбросить к дефолту
+```
+
+### Коллекции
+
+```
+GET    /api/cms/collections?collection=services  — список
+POST   /api/cms/collections                      — создать
+PUT    /api/cms/collections                      — обновить
+DELETE /api/cms/collections?id=X                 — удалить
+PUT    /api/cms/collections/reorder              — сортировка
+```
+
+### Загрузка файлов
+
+```
+POST /api/cms/upload  — загрузить изображение (multipart/form-data)
+```
+
+## Структура проекта
+
+```
+app/
+  admin/           — страницы админки
+  api/cms/         — API эндпоинты
+  page.tsx         — лендинг
+
+components/
+  admin/           — компоненты админки
+  ui/              — shadcn компоненты
+  Hero.tsx         — секции лендинга
+  ...
+
+lib/cms/
+  db.ts            — работа с SQLite
+  schema.ts        — схема полей
+  defaults.ts      — начальные данные
+  auth.ts          — JWT авторизация
+
+data/
+  cms.db           — база данных (создаётся автоматически)
+
+public/uploads/    — загруженные изображения
+```
+
+## Добавление новых полей
+
+1. Добавить поле в схему (`lib/cms/schema.ts`)
+2. Добавить дефолтное значение (`lib/cms/defaults.ts`)
+3. Обновить компонент лендинга
+
+Типы полей: `text`, `textarea`, `richtext`, `number`, `boolean`, `image`, `json`, `schedule`
+
+## Деплой
+
+```bash
+npm run build
+npm start
+```
+
+База данных SQLite хранится в `data/cms.db`. При деплое убедитесь, что папка `data/` доступна для записи.
+
+## Лицензия
+
+MIT
