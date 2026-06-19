@@ -1,8 +1,8 @@
 services:
   barbershop:
     build: .
-    ports:
-      - "3000:3000"
+    expose:
+      - "3000"
     environment:
       - CMS_PASSWORD=BlackBlade2026!
       - CMS_JWT_SECRET=blackblade-jwt-secret-2026-super-secure-key
